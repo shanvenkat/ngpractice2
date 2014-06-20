@@ -1,0 +1,126 @@
+<!doctype html>
+<html ng-app="myapp">
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.11/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.5/angular-route.min.js"></script>  
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.5/angular-animate.min.js"></script>  
+     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular-resource.min.js"></script>
+     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+     <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/css/bootstrap.no-icons.min.css" rel="stylesheet">
+     <link href="http://netdna.bootstrapcdn.com/font-awesome/2.0/css/font-awesome.css" rel="stylesheet">      
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">      
+    <link href="Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="Content/bootstrap-responsive.min.css" rel="stylesheet" />
+    <link href="Content/myangular.css" rel="stylesheet" />  
+  </head>    
+  <body ng-controller="restuarantController" class="ordersTable">        
+        <div class="form-group">
+ 
+            <div>
+                <input type="text" data-ng-model="exploreNearby" class="form-control" placeholder="Explore Places In. e.g. New York" />
+            </div>
+ 
+            <div>
+                <input type="text" data-ng-model="exploreQuery" class="form-control" placeholder="Specify Category. e.g. Burger" />
+            </div>
+ 
+            <div>
+                <button class="btn btn-primary pull-right" data-ng-click="doSearch()"><span class="glyphicon glyphicon-search"></span>Explore</button>
+            </div>
+ 
+        </div>
+ 
+        <div class="well well-sm" data-ng-show="totalRecordsCount == 0">
+            <h5>No Places found Near by ({{exploreNearby}})</h5>
+        </div>
+        <br />
+
+  <div>
+                <div>
+                    <input type="text" data-ng-model="filterValue" class="form-control" placeholder="Filter Places by (Place Name) or (Category)" />
+                </div>
+            </div>
+            <br />
+
+<table class="table table-hover table-striped table-condensed table-bordered"  >
+    <thead>
+        <tr>    
+            <th >Restaurant Image</th>       
+            <th >Restaurant Name</th>
+            <th >Rating</th>
+            <th >Category</th>
+            <th >Specials</th>            
+            <th >Open Hours</th>
+            <th >Contacts</th>
+            <th >GPS Location</th>
+        </tr>
+    </thead>
+    <tbody>       
+       <tr ng-repeat="place in filteredPlaces">          
+            <td><img data-ng-src="{{buildVenueThumbnail(place.venue.photos.groups[0])}}" class="img-thumbnail" /> </td>
+            <td>
+                {{place.venue.name}}
+            </td>           
+            
+            <td>
+               {{place.venue.rating | number:1}} 
+            </td>
+            <td>
+               {{place.venue.categories[0].shortName}}
+            </td>
+            <td>
+               {{place.venue.specials.items[0].message}}
+            </td>            
+             <td>
+               {{place.venue.hours.status}}
+            </td>  
+            <td>
+                <a href="http://" + {{place.venue.url}}> {{place.venue.url}}</a> <br />
+               {{place.venue.location.address}}, <br />
+               {{place.venue.location.city}},<br />
+               {{place.venue.location.state}},<br />
+               {{place.venue.location.country}}. <br />
+               {{place.venue.location.postalCode}} 
+               <br />
+               {{place.venue.contact.formattedPhone}}
+            </td>         
+            <td>
+               {{place.venue.location.lat}}, <br />
+               {{place.venue.location.lng}}
+            </td>
+        </tr>         
+    </tbody>
+
+   <tfoot>
+                    <td colspan="8">
+                        <div class="pagination pull-right">
+                            <ul>
+                                <li ng-class="">
+                                    <a href ng-click="firstPage()">First</a>
+                                </li>
+                                <li ng-class="{disabled: currentPage == 1}">
+                                    <a href ng-click="prevPage()"><< Prev</a>
+                                </li>                               
+                                <li ng-repeat="n in range(buttonstoDisplay)"
+                                    ng-class="{active: n == currentPage}"
+                                    ng-click="pageChanged(n)">
+                                    <a href ng-bind="n"></a>
+                                </li>
+                                <li ng-class="{disabled: currentPage == buttonstoDisplay}">
+                                    <a href ng-click="nextPage()">Next >></a>
+                                </li>
+                                <li >
+                                    <a href ng-click="lastPage()">Last</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+        </tfoot>
+</table>                           
+    
+    <script src="app/app.js"></script>
+    <script src="app/controllers/restuarantController.js"></script>
+    <script src="app/filters/placeNameCategoryFilter.js"></script>
+
+  </body>
+</html>
