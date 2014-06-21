@@ -36,15 +36,28 @@ myapp.controller('restuarantController', function ($scope, $resource, $filter) {
             callback: "JSON_CALLBACK"
         },
         {
-            getFriends: { method: "JSONP", params: { near: $scope.exploreNearby, query: $scope.exploreQuery, limit: $scope.pageSize, offset: offset} }
+            getPlaces: { method: "JSONP", params: { near: $scope.exploreNearby, query: $scope.exploreQuery, limit: $scope.pageSize, offset: offset} }
         }
         );
 
-        resource.getFriends().$promise.then(
-                            function (friends) {
-                                $scope.places = friends.response.groups[0].items;
-                                $scope.totalRecordsCount = friends.response.totalResults;
-                                $scope.buttonstoDisplay = $scope.totalRecordsCount / $scope.pageSize;
+        resource.getPlaces().$promise.then(
+                            function (Places) {
+                                $scope.places = Places.response.groups[0].items;
+                                $scope.totalRecordsCount = Places.response.totalResults;
+                                $scope.totalPagestoBrowse = $scope.totalRecordsCount / $scope.pageSize;
+                                if ($scope.totalRecordsCount > 100) {
+                                    $scope.buttonstoDisplay = 10;
+                                }
+                                else if ($scope.totalRecordsCount > 50 && $scope.totalRecordsCount < 100) {
+                                    $scope.buttonstoDisplay = 5;
+                                }
+                                else {
+                                    $scope.buttonstoDisplay = 2;
+                                }
+
+                                if ($scope.totalPagestoBrowse <= $scope.buttonstoDisplay) {
+                                    $scope.totalPagestoBrowse = $scope.buttonstoDisplay;
+                                }                                
                                 filterPlaces('');
                             },
                             function (error) {
@@ -70,7 +83,7 @@ myapp.controller('restuarantController', function ($scope, $resource, $filter) {
     };
 
     $scope.nextPage = function () {
-        if ($scope.currentPage < $scope.buttonstoDisplay) {
+        if ($scope.currentPage < $scope.totalPagestoBrowse) {
             $scope.currentPage++;
             getPlaces();
         }
@@ -82,7 +95,7 @@ myapp.controller('restuarantController', function ($scope, $resource, $filter) {
     };
 
     $scope.lastPage = function () {
-        if ($scope.currentPage = $scope.buttonstoDisplay) {            
+        if ($scope.currentPage = $scope.totalPagestoBrowse) {
             getPlaces();
         }
     };
@@ -92,7 +105,7 @@ myapp.controller('restuarantController', function ($scope, $resource, $filter) {
             getPlaces();
         }
     };
-    
+
 
     $scope.range = function (start, end) {
         var ret = [];
